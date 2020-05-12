@@ -1,0 +1,16 @@
+Description
+-----------
+A short script made for the purpose of randomly swapping files on a cronjob, e.g. a website banner you'd like to change week by week. 
+
+IMPORTANT
+^^^^^^^^^
+* Files are renamed via hashing (SHA-256 by default). In the event of two identical files or a 
+https://en.wikipedia.org/wiki/Collision_(computer_science)[collision^], one of the two files _will_ be overwritten, as there are no checks for this. Filenames will also obviously not be retained as a result.
+* There is a chance of reselecting the same file that was to be swapped out, resulting in no swap (however it will still be renamed to its hash), this chance of course becoming smaller the more files there are.
+* BSD systems (macOS Yosemite and below) have a random number generation bias making the file swapping worse than psuedo-random. See the script notice for details. 
+
+Usage
+-----
+bash weekly.sh optional/path/to/working/directory
+
+You may change various options under the SETTINGS section at the top of the file script.
