@@ -7,9 +7,8 @@
 ##############
 ## SETTINGS ##
 ##############
-f_name="motd" #File name
+f_name="test" #File name
 f_ext=".jpg" #File extension
-reuse_f_name=false #Never make an identical file the one being swapped out if True
 
 #hash_alg="crc32"  #Fastest
 #hash_alg="sha1"   #Slightly outperforms MD5, making it preferable with its also longer digest
