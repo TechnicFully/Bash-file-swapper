@@ -9,10 +9,13 @@
 ##############
 f_name="test" #File name
 f_ext=".jpg" #File extension
+use_hashing=0 #1 is yes
+
 
 #hash_alg="crc32"  #Fastest
 #hash_alg="sha1"   #Slightly outperforms MD5, making it preferable with its also longer digest
 hash_alg="sha256"  #Safest - No known collisions (as of 2020)
+
 
 
 
@@ -51,17 +54,34 @@ else
 fi
 
 ####Find hash utility and calculate digest for renaming
-if [ -x "$(command -v openssl)" ] && [ -x "$(command -v sed)" ]; then
+if [ "$use_hashing" -eq 1 ]; then
+    if [ "$(command -v openssl)" ] && [ "$(command -v sed)" ]; then
         digest=$(openssl dgst -"$hash_alg" "$f")
         digest=($(echo "$digest" | sed 's/.*=//'))
-else
-    if ! [ -x "$(command -v sed)" ]; then
-        echo "Sed utility not found"
     else
-        echo "Hashing/digest utility not found"
+        if ! [ -x "$(command -v sed)" ]; then
+            echo "Sed utility not found"
+        else
+            echo "Hashing/digest utility not found"
+        fi
+
+        exit 1;
+    fi
+else
+    if ! [ "$(command -v uuid)" ] && ! [ "$(command -v uuidgen)" ]; then
+        echo "UUID utility not found"
+        exit 1;
     fi
 
-    exit 1;
+
+    if [ "$(command -v uuid)" ]; then
+        digest=$(uuid)
+    elif [ "$(command -v uuidgen)" ]; then
+        digest=$(uuidgen)
+    else
+        echo "Unknown error occurred while finding UUID utilities"
+        exit 1;
+    fi
 fi
 
 
@@ -82,7 +102,6 @@ if [ "$OS" == "FreeBSD" ]; then
     select=`jot -r 1 0 $i` #Generate 1 number between 0 and i (total files in directory)
     #echo "File selected (index $i): ${files[select]}" #DEBUG
 elif [ "$OS" == "Darwin" ]; then
-###CHANGE
     select=`jot -r 1 0 $i` #Generate 1 number between 0 and i (total files in directory)
     #echo "File selected (index $i): ${files[select]}" #DEBUG
 else
